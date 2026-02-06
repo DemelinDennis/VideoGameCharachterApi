@@ -1,9 +1,12 @@
-﻿using VideoGameCharachterApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using VideoGameCharachterApi.Data;
+using VideoGameCharachterApi.Models;
 
 namespace VideoGameCharachterApi.Services
 {
-    public class CherachterService : ICharachterService
+    public class CherachterService(AppDbContext context) : ICharachterService
     {
+
         static List<Charachter> charachters = new List<Charachter>() {
             new Charachter { Id = 1, Name = "Mario", Game = "Super Mario Bros.", Role = "Protagonist" },
             new Charachter { Id = 2, Name = "Link", Game = "The Legend of Zelda", Role = "Protagonist" },
@@ -22,13 +25,13 @@ namespace VideoGameCharachterApi.Services
 
         public async Task<Charachter?> GetCharachterByIdAsync(int id)
         {
-            var result = charachters.FirstOrDefault(c => c.Id == id);
-            return await Task.FromResult(result);
+            var result = await context.Charachters.FindAsync(id);
+            return result;
         }
 
         public async Task<List<Charachter>> GetCharachtersAsync()
         {
-            return await Task.FromResult(charachters);
+            return await context.Charachters.ToListAsync();
         }
 
         public Task<bool> UpdateCharachterAsync(int id, Charachter characher)
